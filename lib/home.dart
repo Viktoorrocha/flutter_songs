@@ -11,8 +11,10 @@ class _HomeState extends State<Home> {
   AudioPlayer audioPlayer = AudioPlayer();
   AudioCache audioCache = AudioCache(prefix: "assets/audios/");
   bool primeiraExecucao = true;
+  double volume = 0.5;
 
   _executar() async {
+    audioPlayer.setVolume(volume);
     if (primeiraExecucao) {
       audioPlayer = await audioCache.play("musica.mp3");
       primeiraExecucao = false;
@@ -26,7 +28,7 @@ class _HomeState extends State<Home> {
     if (resultado == 1) {}
   }
 
-  pausar() async {
+  _pausar() async {
     int resultado = await audioPlayer.pause();
     if (resultado == 1) {}
   }
@@ -39,6 +41,16 @@ class _HomeState extends State<Home> {
       ),
       body: Column(
         children: [
+          Slider(
+              value: volume,
+              min: 0,
+              max: 1,
+              onChanged: (novoVolume) {
+                setState(() {
+                  volume = novoVolume;
+                });
+                audioPlayer.setVolume(novoVolume);
+              }),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -55,7 +67,7 @@ class _HomeState extends State<Home> {
                 child: GestureDetector(
                     child: Image.asset("assets/imagens/pausar.png"),
                     onTap: () {
-                      _executar();
+                      _pausar();
                     }),
               ),
               Padding(
@@ -63,7 +75,7 @@ class _HomeState extends State<Home> {
                 child: GestureDetector(
                     child: Image.asset("assets/imagens/parar.png"),
                     onTap: () {
-                      _executar();
+                      _parar();
                     }),
               ),
             ],
